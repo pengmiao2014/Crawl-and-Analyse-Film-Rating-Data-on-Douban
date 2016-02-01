@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  1 01:20:00 2016
+
+@author: miaopeng
+"""
+
+
+import pandas
+from collections import Counter
+
+
+description=[]
+years=[]
+countries=[]
+
+with open("doubanMoviesTop250.txt") as f:
+    content = f.readlines()
+    a=list(range(3, 1001, 4)) 
+    for b in a:
+        description.append(content[b])
+# Extract infomation of year of the movie    
+    for c in range(0,250,1):
+        item=description[c]
+        year=item.split('/' )[0]
+        years.append(year)
+# Plot according to the frequency of the years    
+    letter_counts = Counter(years)
+    year_plot = pandas.DataFrame.from_dict(letter_counts, orient='index')
+    year_plot.plot(kind='bar')
+# Extract infomation of year of the movie    
+    for d in range(0,250,1):
+        item=description[d]
+        country=item.split('/' )[1]
+        countries.append(country)
+# Plot according to the frequency of the countries
+    letter_counts2 = Counter(countries)
+    country_plot = pandas.DataFrame.from_dict(letter_counts2, orient='index')
+    country_plot.plot(kind='bar') 
