@@ -4,7 +4,9 @@ Created on Sun Jan 31 18:10:39 2016
 
 @author: miaopeng
 """
-import csv
+
+#This file is to crawl the movie name, description and rating of the top 250 films on Douban.com
+
 import requests
 from bs4 import BeautifulSoup
 mylist = []
@@ -31,19 +33,20 @@ def crawl(url):
             #print("%s %s %s " % (m_name, m_comments, m_rating_num))
             mylist.append(( m_name,  m_rating_num, m_comments))
            
- 
+# Crawl from page 1 to 10 
 pagenumber = []
 for i in range(10):
     page_number = 25*i
     pagenumber.append(page_number)
 pagelist = list(map(str, pagenumber))
-#pagelist=['0','25','50','75','100','125','150','175','200','225']
+
  
 BASE_URL = 'http://movie.douban.com/top250?start='
 LAST_URL = '&filter=&type='
 for url in [ BASE_URL + MID_URL + LAST_URL for MID_URL in pagelist ]:
     crawl(url)
- 
+
+#print out the result to 'DoubanMoviesTop250.txt'
 import tablib
 headers = ( 'Movie Name', 'Description', 'Rating')
 mylist = tablib.Dataset(*mylist, headers=headers)
