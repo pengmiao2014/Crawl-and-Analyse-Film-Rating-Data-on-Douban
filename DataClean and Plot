@@ -5,35 +5,59 @@ Created on Mon Feb  1 01:20:00 2016
 @author: miaopeng
 """
 
-
-import pandas
-from collections import Counter
-
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 description=[]
 years=[]
-countries=[]
+areas=[]
 
+# Open the data file crawled from Douban.com
 with open("doubanMoviesTop250.txt") as f:
     content = f.readlines()
     a=list(range(3, 1001, 4)) 
     for b in a:
         description.append(content[b])
+
 # Extract infomation of year of the movie    
     for c in range(0,250,1):
         item=description[c]
         year=item.split('/' )[0]
         years.append(year)
-# Plot according to the frequency of the years    
-    letter_counts = Counter(years)
-    year_plot = pandas.DataFrame.from_dict(letter_counts, orient='index')
-    year_plot.plot(kind='bar')
+
 # Extract infomation of year of the movie    
     for d in range(0,250,1):
         item=description[d]
-        country=item.split('/' )[1]
-        countries.append(country)
-# Plot according to the frequency of the countries
-    letter_counts2 = Counter(countries)
-    country_plot = pandas.DataFrame.from_dict(letter_counts2, orient='index')
-    country_plot.plot(kind='bar') 
+        area=item.split('/' )[1]
+        areas.append(area)
+
+# Combine years and areas to a dataframe
+    b=range(1,251,1)
+    s1 = pd.Series(years, index=b, name='s1')
+    s2 = pd.Series(areas, index=b, name='s2')
+    al=pd.concat([s1, s2], axis=1)
+    al.columns = [ 'Year','Area']
+
+# Plot according to the frequency of the years
+    yearss=al.Year.value_counts()
+    dsds=yearss.to_frame(name=None)
+    dsds.columns=['Counts']
+    final=dsds[ dsds['Counts'] > 2]
+    final.plot( kind='bar',color='r')
+    plt.xlabel('Released Year')
+    plt.ylabel('Movie Count')
+    plt.title('Released Year of TOP 250 Rated Movies From Douban (Count>2)')
+
+# Plot according to the frequency of the areas    
+    couns=al.Area.value_counts()
+    dsds2=couns.to_frame(name=None)
+    dsds2.columns=['Counts']
+    final2=dsds2[ dsds2['Counts'] > 2]
+    final2 = final2.append([{'Counts':4}])#Did some data clean about the counts of mainland China
+    final2.plot(kind='bar',color='r')
+    index = np.arange(16)  
+    plt.xticks(index ,('America', 'Japan', 'Hongkong', 'Korean', 'America & England','America & Germany', 'Mainland China & Hongkong', 'England', 'America & Canada', 'Hongkong & Mainland China','France ', 'America & France', 'Germany', 'America & Australia', 'Taiwan & Ameirica','Mainlan China'))
+    plt.xlabel('Area')
+    plt.ylabel('Movie Count')
+    plt.title('Released Area of TOP 250 Rated Movies on Douban (Country>2)')
